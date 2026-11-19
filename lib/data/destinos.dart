@@ -1,0 +1,22 @@
+const List<String> destinos = [
+  'Americana - SP',
+  'Amparo - SP',
+  'Cabreúva - SP',
+  'Campinas - SP',
+  'Indaiatuba - SP',
+  'Itu - SP',
+  'Jundiaí - SP',
+  'Leme - SP',
+  'Limeira - SP',
+  'Mogi Mirim - SP',
+  'Nova Odessa - SP',
+  'Pinhalzinho - SP',
+  'Piracicaba - SP',
+  'Salto - SP',
+  'PMZ - SP',
+  'São Paulo - SP',
+  'Sorocaba - SP',
+  'Sumaré - SP',
+  'Outra cidade',
+  
+];
