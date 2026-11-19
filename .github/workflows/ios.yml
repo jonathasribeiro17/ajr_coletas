@@ -1,0 +1,69 @@
+
+name: AJR Coletas - Build iOS
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-ios:
+    name: Compilar AJR Coletas
+    runs-on: macos-26
+    timeout-minutes: 60
+
+    steps:
+      - name: Baixar codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.9'
+          channel: stable
+          cache: true
+
+      - name: Verificar ambiente
+        run: |
+          flutter --version
+          xcodebuild -version
+          pod --version
+
+      - name: Instalar dependencias Flutter
+        run: flutter pub get
+
+      - name: Analisar projeto
+        run: flutter analyze
+
+      - name: Compilar iOS sem assinatura
+        run: flutter build ios --release --no-codesign
+
+      - name: Gerar arquivo IPA
+        run: |
+          set -e
+
+          APP="build/ios/iphoneos/Runner.app"
+
+          test -d "$APP"
+
+          mkdir -p "$RUNNER_TEMP/Payload"
+
+          ditto "$APP" "$RUNNER_TEMP/Payload/Runner.app"
+
+          cd "$RUNNER_TEMP"
+
+          ditto -c -k --sequesterRsrc --keepParent \
+            Payload \
+            "$GITHUB_WORKSPACE/AJR-Coletas-unsigned.ipa"
+
+          test -f "$GITHUB_WORKSPACE/AJR-Coletas-unsigned.ipa"
+
+      - name: Disponibilizar IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: ajr-coletas-unsigned-ipa
+          path: AJR-Coletas-unsigned.ipa
+          retention-days: 7
+
